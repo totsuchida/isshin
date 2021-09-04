@@ -8,7 +8,7 @@ on:
       - ".github/workflows/terraform-ci.yaml"
     types: [opened, synchronize]
 jobs:
-  Terraform-CI:
+  terraform-ci:
     runs-on: ubuntu-latest
     defaults:
       run:
