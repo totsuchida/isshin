@@ -17,9 +17,6 @@ jobs:
         - name: Checkout
           uses: actions/checkout@v2
         
-        - name: Export TFENV
-          run: export TF_VAR_PROJECT_ID=${{ secrets.PROJECT_ID }}
-        
         - name: Setup tfstate bucket
           run: mv remote-state remote-state.tf
           run: sed -i remote-state.tf -e "s/TFSTATE_BUCKET/${{ secrets.TFSTATE_BUCKET }}/g"
@@ -44,28 +41,30 @@ jobs:
         
         - name: Terraform plan
           id: plan
-          run: terraform plan -no-color
+          run: |
+            export TF_VAR_PROJECT_ID=${{ secrets.PROJECT_ID }}
+            terraform plan -no-color
         
         - name: Post Result to PR-Comment
           uses: actions/github-script@v4
           with:
             script: |
-            const body = `#### terraform init \`${{ steps.init.conclusion }}\`
-            #### terraform plan \`${{ steps.plan.conclusion }}\`
+              const body = `#### terraform init \`${{ steps.init.conclusion }}\`
+              #### terraform plan \`${{ steps.plan.conclusion }}\`
 
-            <details>
-              <summary>Plan Result</summary>
+              <details>
+                <summary>Plan Result</summary>
 
-              \`\`\`
-              ${{ steps.plan.outputs.stdout }}
-              \`\`\`
-            </details>
+                \`\`\`
+                ${{ steps.plan.outputs.stdout }}
+                \`\`\`
+              </details>
 
-            `;
-            
-            github.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: body
-            })
+              `;
+              
+              github.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: body
+              })
