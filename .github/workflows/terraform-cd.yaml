@@ -1,6 +1,6 @@
-name: Terraform Plan
+name: Terraform Apply
 on:
-  pull_request:
+  push:
     branches:
       - "develop"
     paths:
@@ -8,7 +8,7 @@ on:
       - ".github/workflows/terraform-cd.yaml"
     types: [opened, synchronize]
 jobs:
-  terraform-ci:
+  terraform-cd:
     runs-on: ubuntu-latest
     defaults:
       run:
