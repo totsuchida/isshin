@@ -5,7 +5,7 @@ on:
       - "develop"
     paths:
       - "infra/**.tf"
-      - ".github/workflows/terraform-ci.yaml"
+      - ".github/workflows/terraform-cd.yaml"
     types: [opened, synchronize]
 jobs:
   terraform-ci:
