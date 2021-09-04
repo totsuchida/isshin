@@ -18,8 +18,9 @@ jobs:
         uses: actions/checkout@v2
       
       - name: Setup tfstate bucket
-        run: mv remote-state remote-state.tf
-        run: sed -i remote-state.tf -e "s/TFSTATE_BUCKET/${{ secrets.TFSTATE_BUCKET }}/g"
+        run: |
+          mv remote-state remote-state.tf
+          sed -i remote-state.tf -e "s/TFSTATE_BUCKET/${{ secrets.TFSTATE_BUCKET }}/g"
       
       - name: GCP Setup
         uses: google-github-actions/setup-gcloud@master
