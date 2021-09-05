@@ -1,0 +1,47 @@
+name: Terraform Apply
+on:
+  push:
+    branches:
+      - "develop"
+    paths:
+      - "infra/**.tf"
+      - ".github/workflows/terraform-cd.yaml"
+    types: [opened, synchronize]
+jobs:
+  terraform-cd:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./infra
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      
+      - name: Setup tfstate bucket
+        run: |
+          mv remote-state remote-state.tf
+          sed -i remote-state.tf -e "s/TFSTATE_BUCKET/${{ secrets.TFSTATE_BUCKET }}/g"
+      
+      - name: GCP Setup
+        uses: google-github-actions/setup-gcloud@master
+        with:
+          version: "latest"
+          project_id: ${{ secrets.PROJECT_ID }}
+          service_account_key: ${{ secrets.TERRAFORM_CICD_CREDENTIALS }}
+          export_default_credentials: true
+
+      - name: Terraform Setup
+        uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_version: 1.0.6
+      
+      - name: Terraform init
+        id: init
+        run: terraform init -no-color
+        continue-on-error: false
+      
+      - name: Terraform apply
+        id: apply
+        run: |
+          export TF_VAR_PROJECT_ID=${{ secrets.PROJECT_ID }}
+          terraform apply -no-color
