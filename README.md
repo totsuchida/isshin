@@ -20,3 +20,5 @@ ToDoリストサービスです。
 1. 起動：`docker compose up -d --build`
 1. 接続：`docker compose exec python3 bash`
 1. 停止：`docker compose down`
+
+1. FastAPI起動：`uvicorn main:app --reload`
